@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Speed Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #1e1e2f;
+      padding: 25px;
+      border-radius: 12px;
+      width: 600px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    #text {
+      background: #2a2a40;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      border-radius: 8px;
+      border: none;
+      padding: 10px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #00c9a7;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00b39f;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Typing Speed Test</h1>
+  <div id="text"></div>
+  <textarea id="input" placeholder="Start typing here..."></textarea>
+
+  <div class="stats">
+    <span>Time: <span id="time">0</span>s</span>
+    <span>WPM: <span id="wpm">0</span></span>
+    <span>Accuracy: <span id="accuracy">100</span>%</span>
+  </div>
+
+  <button onclick="restartTest()">Restart</button>
+</div>
+
+<script>
+const sentences = [
+  "The quick brown fox jumps over the lazy dog.",
+  "Typing speed is an important skill for developers.",
+  "Practice daily to improve your typing accuracy and speed.",
+  "JavaScript makes web pages interactive and dynamic.",
+  "Consistency is the key to mastering any skill."
+];
+
+let startTime, timerInterval;
+
+const textEl = document.getElementById("text");
+const inputEl = document.getElementById("input");
+const timeEl = document.getElementById("time");
+const wpmEl = document.getElementById("wpm");
+const accuracyEl = document.getElementById("accuracy");
+
+function loadText() {
+  const random = sentences[Math.floor(Math.random() * sentences.length)];
+  textEl.innerText = random;
+}
+
+function startTimer() {
+  startTime = new Date();
+  timerInterval = setInterval(() => {
+    const now = new Date();
+    const seconds = Math.floor((now - startTime) / 1000);
+    timeEl.innerText = seconds;
+  }, 1000);
+}
+
+inputEl.addEventListener("input", () => {
+  if (!startTime) startTimer();
+
+  const typed = inputEl.value;
+  const original = textEl.innerText;
+
+  let correctChars = 0;
+
+  for (let i = 0; i < typed.length; i++) {
+    if (typed[i] === original[i]) correctChars++;
+  }
+
+  const accuracy = ((correctChars / typed.length) * 100) || 100;
+  accuracyEl.innerText = Math.floor(accuracy);
+
+  const timeTaken = (new Date() - startTime) / 1000 / 60;
+  const wordsTyped = typed.length / 5;
+  const wpm = Math.floor(wordsTyped / timeTaken) || 0;
+  wpmEl.innerText = wpm;
+
+  if (typed === original) {
+    clearInterval(timerInterval);
+  }
+});
+
+function restartTest() {
+  clearInterval(timerInterval);
+  startTime = null;
+  inputEl.value = "";
+  timeEl.innerText = 0;
+  wpmEl.innerText = 0;
+  accuracyEl.innerText = 100;
+  loadText();
+}
+
+loadText();
+</script>
+
+</body>
+</html>
